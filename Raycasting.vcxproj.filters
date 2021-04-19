@@ -1,24 +1,74 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ItemGroup>
-		<ClCompile Include="src\ofApp.cpp">
-			<Filter>src</Filter>
-		</ClCompile>
-		<ClCompile Include="src\main.cpp">
-			<Filter>src</Filter>
-		</ClCompile>
-	</ItemGroup>
-	<ItemGroup>
-		<Filter Include="src">
-			<UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
-	<ItemGroup>
-		<ClInclude Include="src\ofApp.h">
-			<Filter>src</Filter>
-		</ClInclude>
-	</ItemGroup>
-	<ItemGroup>
-		<ResourceCompile Include="icon.rc" />
-	</ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ofApp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CameraMatrices.cpp" />
+    <ClCompile Include="src\ofxCubemap.cpp" />
+    <ClCompile Include="src\SimpleDrawNode.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ofApp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\CameraMatrices.h" />
+    <ClInclude Include="src\DirectionalLight.h" />
+    <ClInclude Include="src\ofxCubemap.h" />
+    <ClInclude Include="src\PointLight.h" />
+    <ClInclude Include="src\SceneGraphNode.h" />
+    <ClInclude Include="src\SimpleDrawNode.h" />
+    <ClInclude Include="src\SpotLight.h" />
+    <ClInclude Include="src\Raytracer\Tracer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\data\models\torus.ply" />
+    <None Include="bin\data\models\cone.ply" />
+    <None Include="bin\data\models\cube.ply" />
+    <None Include="bin\data\models\cylinder.ply" />
+    <None Include="bin\data\models\sphere.ply" />
+    <None Include="bin\data\.gitkeep" />
+    <None Include="bin\data\mesh.frag" />
+    <None Include="bin\data\mesh.vert" />
+    <None Include="bin\data\skybox.frag" />
+    <None Include="bin\data\skybox.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bin\data\skyboxes\cube_back.jpg" />
+    <Image Include="bin\data\skyboxes\cube_bottom.jpg" />
+    <Image Include="bin\data\skyboxes\cube_front.jpg" />
+    <Image Include="bin\data\skyboxes\cube_left.jpg" />
+    <Image Include="bin\data\skyboxes\cube_right.jpg" />
+    <Image Include="bin\data\skyboxes\cube_top.jpg" />
+    <Image Include="bin\data\skyboxes\cube2_back.jpg" />
+    <Image Include="bin\data\skyboxes\cube2_bottom.jpg" />
+    <Image Include="bin\data\skyboxes\cube2_front.jpg" />
+    <Image Include="bin\data\skyboxes\cube2_left.jpg" />
+    <Image Include="bin\data\skyboxes\cube2_right.jpg" />
+    <Image Include="bin\data\skyboxes\cube2_top.jpg" />
+    <Image Include="bin\data\skyboxes\irradiance_back.png" />
+    <Image Include="bin\data\skyboxes\irradiance_bottom.png" />
+    <Image Include="bin\data\skyboxes\irradiance_front.png" />
+    <Image Include="bin\data\skyboxes\irradiance_left.png" />
+    <Image Include="bin\data\skyboxes\irradiance_right.png" />
+    <Image Include="bin\data\skyboxes\irradiance_top.png" />
+    <Image Include="bin\data\skyboxes\night_back.jpg" />
+    <Image Include="bin\data\skyboxes\night_bottom.jpg" />
+    <Image Include="bin\data\skyboxes\night_front.jpg" />
+    <Image Include="bin\data\skyboxes\night_left.jpg" />
+    <Image Include="bin\data\skyboxes\night_right.jpg" />
+    <Image Include="bin\data\skyboxes\night_top.jpg" />
+  </ItemGroup>
 </Project>
