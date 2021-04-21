@@ -32,6 +32,10 @@ class ofApp : public ofBaseApp{
 		ofMesh cubeMesh;
 		ofxCubemap cubemap;
 
+		ofImage img;
+		int imgWidth = 400;
+		int imgHeight = 400;
+
 		SceneGraphNode sceneGraphRoot;
 		std::shared_ptr<SceneGraphNode> sphereNode;
 

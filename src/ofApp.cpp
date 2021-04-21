@@ -29,6 +29,19 @@ void ofApp::setup()
 	sceneGraphRoot.childNodes.emplace_back(new SceneGraphNode());
 
 	sceneGraphRoot.childNodes.back()->childNodes.emplace_back(new SimpleDrawNode(testSphere, testShader));
+
+	img.allocate(imgWidth, imgHeight, OF_IMAGE_COLOR);
+	img.setColor(ofColor::white);
+
+	for (int i = 0; i < imgWidth; i++) {
+		for (int j = 0; j < imgHeight; j++) {
+			ofColor color = ofColor(255 - i % imgWidth, j % imgHeight, 255);
+			img.setColor(i % imgWidth, j % imgHeight, color);
+		}
+	}
+
+	img.update();
+	img.save("Pixels.jpg");
 }
 
 //--------------------------------------------------------------
