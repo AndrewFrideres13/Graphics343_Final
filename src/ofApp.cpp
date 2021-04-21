@@ -2,7 +2,8 @@
 #include "GLFW/glfw3.h"
 #include "CameraMatrices.h"
 #include "SimpleDrawNode.h"
-
+#include <chrono>
+using namespace std::chrono;
 //--------------------------------------------------------------
 void ofApp::setup() {
 	using namespace glm;
@@ -29,6 +30,8 @@ void ofApp::setup() {
 
 	sceneGraphRoot.childNodes.back()->childNodes.emplace_back(new SimpleDrawNode(testSphere, testShader));
 
+	//Start our high precision timer before we begin the raytracing work
+	auto start = high_resolution_clock::now();
 
 	img.allocate(imgWidth, imgHeight, OF_IMAGE_COLOR);
 	img.setColor(ofColor::white);
@@ -42,6 +45,12 @@ void ofApp::setup() {
 
 	img.update();
 	img.save("Pixels.jpg");
+
+	//Stop our timer, and calculate the elapsed time
+	//This may need to move before we save the img...not 100% sure yet.
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<milliseconds>(stop - start);
+	std::cout << "Elapsed Time: " << duration.count() << "ms" << std::endl;
 }
 
 //--------------------------------------------------------------
