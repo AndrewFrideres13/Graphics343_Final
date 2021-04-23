@@ -58,7 +58,8 @@ void ofApp::setup() {
 			tracer = { origin, lower_left_corner + u * horizontal + v * vertical - origin };
 			vec3 pixel_color = tracer.ray_color(tracer);
 			//ofColor color = ofColor(255 - i % imgWidth, j % imgHeight, 255);
-			ofColor color = ofColor(pixel_color.r - i % imgWidth, pixel_color.g - j % imgHeight, pixel_color.b);
+			//ofColor color = ofColor(pixel_color.r - i % imgWidth, pixel_color.g - j % imgHeight, pixel_color.b);
+			ofColor color(pixel_color.x * 255, pixel_color.y * 255, pixel_color.z * 255);
 			img.setColor(i % imgWidth, j % imgHeight, color);
 		}
 	}

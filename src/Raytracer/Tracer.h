@@ -20,7 +20,7 @@ public:
 		vec3 oc = r.origin() - center;
 		auto a = pow(r.direction().length(), 2);
 		auto half_b = dot(oc, r.direction());
-		auto c = oc.length() - pow(radius, 2);
+		auto c = pow(oc.length(), 2) - pow(radius, 2);
 		auto discriminant = pow(half_b, 2) - a * c;
 
 		if (discriminant < 0) {
