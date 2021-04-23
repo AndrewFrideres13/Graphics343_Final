@@ -5,6 +5,7 @@
 #include <chrono>
 using namespace std::chrono;
 //--------------------------------------------------------------
+
 void ofApp::setup() {
 	using namespace glm;
 
@@ -30,27 +31,50 @@ void ofApp::setup() {
 
 	sceneGraphRoot.childNodes.back()->childNodes.emplace_back(new SimpleDrawNode(testSphere, testShader));
 
-	//Start our high precision timer before we begin the raytracing work
-	auto start = high_resolution_clock::now();
+
+	// Image
+	const auto aspect_ratio = imgHeight / imgWidth;
+
+	// Camera
+	auto viewport_height = 2.0;
+	auto viewport_width = aspect_ratio * viewport_height;
+	auto focal_length = 1.0;
+
+	auto origin = vec3(0, 0, 0);
+	auto horizontal = vec3(viewport_width, 0, 0);
+	auto vertical = vec3(0, viewport_height, 0);
+	auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focal_length);
 
 	img.allocate(imgWidth, imgHeight, OF_IMAGE_COLOR);
 	img.setColor(ofColor::white);
 
+	//Start our high precision timer before we begin the brunt of the raytracing work
+	auto start = high_resolution_clock::now();
+
 	for (int i = 0; i < imgWidth; i++) {
 		for (int j = 0; j < imgHeight; j++) {
-			ofColor color = ofColor(255 - i % imgWidth, j % imgHeight, 255);
+			auto u = float(i) / (imgWidth - 1);
+			auto v = float(j) / (imgHeight - 1);
+			tracer = { origin, lower_left_corner + u * horizontal + v * vertical - origin };
+			vec3 pixel_color = tracer.ray_color(tracer);
+			//ofColor color = ofColor(255 - i % imgWidth, j % imgHeight, 255);
+			ofColor color = ofColor(pixel_color.r - i % imgWidth, pixel_color.g - j % imgHeight, pixel_color.b);
 			img.setColor(i % imgWidth, j % imgHeight, color);
 		}
 	}
 
-	img.update();
-	img.save("Pixels.jpg");
-
 	//Stop our timer, and calculate the elapsed time
-	//This may need to move before we save the img...not 100% sure yet.
+	//This may need to move to after we save the img...not 100% sure yet.
+	//Mainly, we want to record the brunt of the work which will be the 
+	//function above, and any other intensive calculations done.
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop - start);
 	std::cout << "Elapsed Time: " << duration.count() << "ms" << std::endl;
+
+	img.update();
+	img.save("Pixels.jpg");
+
+
 }
 
 //--------------------------------------------------------------

@@ -29,6 +29,8 @@
     <ClInclude Include="src\SimpleDrawNode.h" />
     <ClInclude Include="src\SpotLight.h" />
     <ClInclude Include="src\Raytracer\Tracer.h" />
+    <ClInclude Include="src\Raytracer\hittable.h" />
+    <ClInclude Include="src\Sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

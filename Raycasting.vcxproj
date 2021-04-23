@@ -193,9 +193,11 @@
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="src\ofxCubemap.h" />
     <ClInclude Include="src\PointLight.h" />
+    <ClInclude Include="src\Raytracer\hittable.h" />
     <ClInclude Include="src\Raytracer\Tracer.h" />
     <ClInclude Include="src\SceneGraphNode.h" />
     <ClInclude Include="src\SimpleDrawNode.h" />
+    <ClInclude Include="src\Sphere.h" />
     <ClInclude Include="src\SpotLight.h" />
   </ItemGroup>
   <ItemGroup>
