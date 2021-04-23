@@ -5,6 +5,8 @@
 #include "SceneGraphNode.h"
 #include "ofxCubemap.h"
 #include "CameraMatrices.h"
+#include "vec3T.h"
+#include "ray.h"
 
 class ofApp : public ofBaseApp{
 
@@ -32,9 +34,9 @@ class ofApp : public ofBaseApp{
 		ofMesh cubeMesh;
 		ofxCubemap cubemap;
 
-		ofImage img;
-		int imgWidth = 400;
-		int imgHeight = 400;
+		ofImage img; // Image object to be saved
+		int imgWidth = 700; // Width of image (height is calculated in setup)
+		float aspectRatio = 16.0f / 9.0f; // Aspect ratio of image
 
 		SceneGraphNode sceneGraphRoot;
 		std::shared_ptr<SceneGraphNode> sphereNode;
@@ -42,5 +44,9 @@ class ofApp : public ofBaseApp{
 		void drawCube(const CameraMatrices& camMatrices);
 
 		Camera camera{ glm::vec3(0, 1.0f, 10.0f) };
+
+		vec3T firstV;
+		vec3T secondV;
+		vec3T thirdV;
 		
 };
