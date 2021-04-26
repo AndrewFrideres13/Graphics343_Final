@@ -180,23 +180,15 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\CameraMatrices.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
-    <ClCompile Include="src\ofxCubemap.cpp" />
-    <ClCompile Include="src\SimpleDrawNode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\CameraMatrices.h" />
     <ClInclude Include="src\DirectionalLight.h" />
     <ClInclude Include="src\ofApp.h" />
-    <ClInclude Include="src\ofxCubemap.h" />
     <ClInclude Include="src\PointLight.h" />
     <ClInclude Include="src\Raytracer\hittable.h" />
     <ClInclude Include="src\Raytracer\Tracer.h" />
-    <ClInclude Include="src\SceneGraphNode.h" />
-    <ClInclude Include="src\SimpleDrawNode.h" />
     <ClInclude Include="src\Sphere.h" />
     <ClInclude Include="src\SpotLight.h" />
   </ItemGroup>
@@ -204,13 +196,6 @@
     <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="icon.rc">
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\data\.gitkeep" />
