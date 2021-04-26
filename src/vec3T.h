@@ -2,6 +2,10 @@
 
 #include <cmath>
 #include <iostream>
+#include <random>
+
+using std::sqrt;
+using std::fabs;
 
 class vec3T
 {
@@ -41,6 +45,22 @@ public:
 
 	float length_squared() const {
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+	}
+
+	inline static float random_float_vec() {
+		return rand() / (RAND_MAX + 1.0f);
+	}
+
+	inline static float random_float_vec(float min, float max) {
+		return min + (max - min) * random_float_vec();
+	}
+
+	inline static vec3T random() {
+		return vec3T(random_float_vec(), random_float_vec(), random_float_vec());
+	}
+
+	inline static vec3T random(float min, float max) {
+		return vec3T(random_float_vec(min, max), random_float_vec(min, max), random_float_vec(min, max));
 	}
 
 	float e[3];
@@ -91,4 +111,27 @@ inline vec3T cross(const vec3T& u, const vec3T& v) {
 
 inline vec3T unit_vector(vec3T v) {
 	return v / v.length();
+}
+
+inline vec3T random_in_unit_sphere() {
+	while (true) {
+		auto p = vec3T::random(-1, 1);
+		if (p.length_squared() >= 1) continue;
+		return p;
+	}
+}
+
+inline vec3T random_in_hemisphere(const vec3T& normal) {
+	vec3T in_unit_sphere = random_in_unit_sphere();
+	if (dot(in_unit_sphere, normal) > 0.0f) {
+		return in_unit_sphere;
+	}
+	else
+	{
+		return -in_unit_sphere;
+	}
+}
+
+inline vec3T random_unit_vector() {
+	return unit_vector(random_in_unit_sphere());
 }

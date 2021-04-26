@@ -5,8 +5,10 @@
 #include "SceneGraphNode.h"
 #include "ofxCubemap.h"
 #include "CameraMatrices.h"
-#include "vec3T.h"
-#include "ray.h"
+#include "rtweekend.h"
+#include "hittable_list.h"
+#include "sphere.h"
+#include "cameraT.h"
 
 class ofApp : public ofBaseApp{
 
@@ -35,7 +37,7 @@ class ofApp : public ofBaseApp{
 		ofxCubemap cubemap;
 
 		ofImage img; // Image object to be saved
-		int imgWidth = 700; // Width of image (height is calculated in setup)
+		int imgWidth = 350; // Width of image (height is calculated in setup)
 		float aspectRatio = 16.0f / 9.0f; // Aspect ratio of image
 
 		SceneGraphNode sceneGraphRoot;

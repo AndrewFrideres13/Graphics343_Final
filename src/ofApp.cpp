@@ -3,30 +3,38 @@
 #include "CameraMatrices.h"
 #include "SimpleDrawNode.h"
 
+/*
 float hit_sphere(const point3& center, float radius, const ray& r) {
 	vec3T oc = r.origin() - center;
-	auto a = dot(r.direction(), r.direction());
-	auto b = 2.0f * dot(oc, r.direction());
-	auto c = dot(oc, oc) - radius * radius;
-	auto discriminant = b * b - 4 * a * c;
-	if (discriminant < 0) {
+	auto a = r.direction().length_squared();
+	auto half_b = dot(oc, r.direction());
+	auto c = oc.length_squared() - radius * radius;
+	auto discriminant = half_b * half_b - a * c;
+	if (discriminant < 0) 
+	{
 		return -1.0f;
 	}
 	else 
 	{
-		return (-b - sqrt(discriminant)) / (2.0f * a);
+		return (-half_b - sqrt(discriminant)) / (a);
 	}
 }
+*/
 
-color ray_color(const ray& r)
+color ray_color(const ray& r, const hittable& world, int depth)
 {
-	auto t = hit_sphere(point3(0, 0, -1), 0.5f, r);
-	if (t > 0.0f) {
-		vec3T N = unit_vector(r.at(t) - vec3T(0, 0, -1));
-		return 0.5f * color(N.x() + 1, N.y() + 1, N.z() + 1);
+	if (depth <= 0) {
+		return color(0, 0, 0);
+	}
+
+	hit_record rec;
+	if (world.hit(r, 0.001f, infinity, rec)) {
+		//point3 target = rec.p + rec.normal + random_unit_vector();
+		point3 target = rec.p + random_in_hemisphere(rec.normal);
+		return 0.5f * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
 	}
 	vec3T unit_direction = unit_vector(r.direction());
-	t = 0.5f * (unit_direction.y() + 1.0f);
+	auto t = 0.5f * (unit_direction.y() + 1.0f);
 	return (1.0f - t) * color(1.0f, 1.0f, 1.0f) + t * color(0.5f, 0.7f, 1.0f);
 }
 
@@ -57,27 +65,40 @@ void ofApp::setup()
 
 	sceneGraphRoot.childNodes.back()->childNodes.emplace_back(new SimpleDrawNode(testSphere, testShader));
 
-	int imgHeight = (int)(imgWidth / aspectRatio); // Setting height based on aspect ratio
+	const int imgHeight = (int)(imgWidth / aspectRatio); // Setting height based on aspect ratio
+	const int samples_per_pixel = 10;
+	const int max_depth = 10;
 
-	float viewport_height = 2.0f; // Setting up the viewport for raytracing
-	float viewport_width = aspectRatio * viewport_height;
-	float focal_length = 1.0f;
+	hittable_list world; // Creating all the objects in the scene
+	world.add(make_shared<sphere>(point3(0, 0, -1), 0.5f));
+	world.add(make_shared<sphere>(point3(0, -100.5f, -1), 100));
 
-	point3 origin = point3(0, 0, 0); // Origin of the camera
-	auto horizontal = vec3T(viewport_width, 0, 0);
-	auto vertical = vec3T(0, viewport_height, 0);
-	auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - vec3T(0, 0, focal_length);
+	cameraT cam;
 
 	img.allocate(imgWidth, imgHeight, OF_IMAGE_COLOR);
 	img.setColor(ofColor::white);
 
 	for (int j = imgHeight - 1; j >= 0; j--) {
 		for (int i = 0; i < imgWidth; i++) {
-			auto u = float(i) / (imgWidth - 1);
-			auto v = float(j) / (imgHeight - 1);
-			ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			color pixel_color = ray_color(r);
-			ofColor color(pixel_color.x() * 255, pixel_color.y() * 255, pixel_color.z() * 255);
+			color pixel_color(0, 0, 0);
+			for (int s = 0; s < samples_per_pixel; s++) {
+				auto u = (i + random_float()) / (imgWidth - 1);
+				auto v = (j + random_float()) / (imgHeight - 1);
+				ray r = cam.get_ray(u, v);
+				pixel_color += ray_color(r, world, max_depth);
+			}
+
+			//auto u = float(i) / (imgWidth - 1);
+			//auto v = float(j) / (imgHeight - 1);
+			//ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+			//color pixel_color = ray_color(r, world);
+			auto rColor = sqrt(pixel_color.x() / samples_per_pixel);
+			auto gColor = sqrt(pixel_color.y() / samples_per_pixel);
+			auto bColor = sqrt(pixel_color.z() / samples_per_pixel);
+			rColor = 256 * clamp(rColor, 0.0f, 0.999f);
+			gColor = 256 * clamp(gColor, 0.0f, 0.999f);
+			bColor = 256 * clamp(bColor, 0.0f, 0.999f);
+			ofColor color(rColor, gColor, bColor);
 			//ofColor color(255, 0, 0);
 			img.setColor(i % imgWidth, ((imgHeight - 1) - j) % imgHeight, color);
 		}
