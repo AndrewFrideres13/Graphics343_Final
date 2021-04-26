@@ -1,10 +1,15 @@
 #pragma once
 
 #include "ray.h"
+#include "rtweekend.h"
+#include "material.h"
+
+class material;
 
 struct hit_record {
 	point3 p;
 	vec3T normal;
+	shared_ptr<material> mat_ptr;
 	float t;
 	bool front_face;
 

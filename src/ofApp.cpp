@@ -1,9 +1,24 @@
 #include "ofApp.h"
 #include "GLFW/glfw3.h"
-#include "CameraMatrices.h"
-#include "SimpleDrawNode.h"
 #include <chrono>
 using namespace std::chrono;
+/*
+float hit_sphere(const point3& center, float radius, const ray& r) {
+	vec3T oc = r.origin() - center;
+	auto a = r.direction().length_squared();
+	auto half_b = dot(oc, r.direction());
+	auto c = oc.length_squared() - radius * radius;
+	auto discriminant = half_b * half_b - a * c;
+	if (discriminant < 0)
+	{
+		return -1.0f;
+	}
+	else
+	{
+		return (-half_b - sqrt(discriminant)) / (a);
+	}
+}
+*/
 
 color ray_color(const ray& r, const hittable& world, int depth) {
 	if (depth <= 0) {
@@ -13,8 +28,15 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 	hit_record rec;
 	if (world.hit(r, 0.001f, infinity, rec)) {
 		//point3 target = rec.p + rec.normal + random_unit_vector();
-		point3 target = rec.p + random_in_hemisphere(rec.normal);
-		return 0.5f * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
+		//point3 target = rec.p + random_in_hemisphere(rec.normal);
+		//return 0.5f * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
+
+		ray scattered;
+		color attenuation;
+		if (rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
+			return attenuation * ray_color(scattered, world, depth - 1);
+		}
+		return color(0, 0, 0);
 	}
 	vec3T unit_direction = unit_vector(r.direction());
 	auto t = 0.5f * (unit_direction.y() + 1.0f);
@@ -33,27 +55,24 @@ void ofApp::setup() {
 
 	cubeMesh.load("models/cube.ply");
 
-	cubemap.load("skyboxes/cube2_front.jpg", "skyboxes/cube2_back.jpg", "skyboxes/cube2_right.jpg", "skyboxes/cube2_left.jpg", "skyboxes/cube2_top.jpg", "skyboxes/cube2_bottom.jpg");
-
-	cubemap.getTexture().generateMipmap();
-
-	skyboxShader.load("skybox.vert", "skybox.frag");
-
-	testSphere.load("models/sphere.ply");
-
-	testShader.load("mesh.vert", "mesh.frag");
-
-	sceneGraphRoot.childNodes.emplace_back(new SceneGraphNode());
-
-	sceneGraphRoot.childNodes.back()->childNodes.emplace_back(new SimpleDrawNode(testSphere, testShader));
-
+	// RAYTRACING STUFF BEGINS
 	const int imgHeight = (int)(imgWidth / aspectRatio); // Setting height based on aspect ratio
 	const int samples_per_pixel = 10;
 	const int max_depth = 10;
 
 	hittable_list world; // Creating all the objects in the scene
-	world.add(make_shared<sphere>(point3(0, 0, -1), 0.5f));
-	world.add(make_shared<sphere>(point3(0, -100.5f, -1), 100));
+	//world.add(make_shared<sphere>(point3(0, 0, -1), 0.5f));
+	//world.add(make_shared<sphere>(point3(0, -100.5f, -1), 100));
+
+	auto material_ground = make_shared<lambertian>(color(0.8f, 0.8f, 0.0f));
+	auto material_center = make_shared<lambertian>(color(0.7f, 0.3f, 0.3f));
+	auto material_left = make_shared<metal>(color(0.8f, 0.8f, 0.8f), 0.3f);
+	auto material_right = make_shared<metal>(color(0.8f, 0.6f, 0.2f), 1.0f);
+
+	world.add(make_shared<sphere>(point3(0.0f, -100.5f, -1.0f), 100.0f, material_ground));
+	world.add(make_shared<sphere>(point3(0.0f, 0.0f, -1.0f), 0.5f, material_center));
+	world.add(make_shared<sphere>(point3(-1.0f, 0.0f, -1.0f), 0.5f, material_left));
+	world.add(make_shared<sphere>(point3(1.0f, 0.0f, -1.0f), 0.5f, material_right));
 
 	cameraT cam;
 
@@ -89,14 +108,21 @@ void ofApp::setup() {
 		}
 	}
 
+	//for (int i = 0; i < imgWidth; i++) {
+	//	for (int j = 0; j < imgHeight; j++) {
+	//		ofColor color = ofColor(255 - i % imgWidth, j % imgHeight, 255);
+	//		img.setColor(i % imgWidth, j % imgHeight, color);
+	//	}
+	//}
+
 	img.update();
-	img.save("Pixels.jpg");
+	img.save("Pixels.jpg", OF_IMAGE_QUALITY_BEST);
 
 	//Stop our timer, and calculate the elapsed time
 	//This may need to move before we save the img...not 100% sure yet.
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop - start);
-	std::cout << "Elapsed Time: " << duration.count() << "ms" << std::endl;
+	std::cout << "\nElapsed Time: " << duration.count() << "ms" << std::endl;
 }
 
 //--------------------------------------------------------------
@@ -106,39 +132,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	using namespace glm;
 
-	/*
-	float width = static_cast<float>(ofGetViewportWidth());
-	float height = static_cast<float>(ofGetViewportHeight());
-	float aspect = width / height;
-
-	mat4 model;
-
-	CameraMatrices camMatrices{ camera, aspect, 0.01f, 20.0f };
-
-	skyboxShader.begin();
-
-	glDepthFunc(GL_LEQUAL);
-
-	skyboxShader.setUniformMatrix4f("mvp", camMatrices.getProj() * mat4(mat3(camMatrices.getView())));
-	skyboxShader.setUniformTexture("cubemap", cubemap.getTexture(), 0);
-
-	cubeMesh.draw();
-
-	skyboxShader.end();
-	glDepthFunc(GL_LESS);
-
-	sceneGraphRoot.drawSceneGraph(camMatrices);
-	*/
-
-	/*
-	testShader.begin();
-
-	testSphere.draw();
-
-	testShader.end();
-	*/
 }
 
 //--------------------------------------------------------------
@@ -193,9 +187,6 @@ void ofApp::windowResized(int w, int h) {
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg) {
 
-}
-
-void ofApp::drawCube(const CameraMatrices& camMatrices) {
 }
 
 //--------------------------------------------------------------
