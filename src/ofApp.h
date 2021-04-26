@@ -6,9 +6,11 @@
 #include "ofxCubemap.h"
 #include "CameraMatrices.h"
 #include "rtweekend.h"
+#include "hittable.h"
 #include "hittable_list.h"
 #include "sphere.h"
 #include "cameraT.h"
+#include "material.h"
 
 class ofApp : public ofBaseApp{
 

@@ -47,6 +47,11 @@ public:
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 	}
 
+	bool near_zero() const {
+		const auto s = 1e-8;
+		return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+	}
+
 	inline static float random_float_vec() {
 		return rand() / (RAND_MAX + 1.0f);
 	}
@@ -134,4 +139,8 @@ inline vec3T random_in_hemisphere(const vec3T& normal) {
 
 inline vec3T random_unit_vector() {
 	return unit_vector(random_in_unit_sphere());
+}
+
+inline vec3T reflect(const vec3T& v, const vec3T& n) {
+	return v - 2 * dot(v, n) * n;
 }
