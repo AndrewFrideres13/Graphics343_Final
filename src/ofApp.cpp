@@ -80,7 +80,7 @@ void ofApp::setup() {
 
 	// RAYTRACING STUFF BEGINS
 	const int imgHeight = (int)(imgWidth / aspectRatio); // Setting height based on aspect ratio
-	const int samples_per_pixel = 20;
+	const int samples_per_pixel = 10;
 	const int max_depth = 5;
 
 	// World setup
