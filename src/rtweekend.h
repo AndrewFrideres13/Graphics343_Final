@@ -5,6 +5,7 @@
 #include <memory>
 #include <cstdlib>
 #include <random>
+#include "ofMain.h"
 
 using std::shared_ptr;
 using std::make_shared;
@@ -26,8 +27,9 @@ inline float random_float(float min, float max) {
 }
 
 inline float clamp(float x, float min, float max) {
-	if (x < min) { return min; }
-	if (x > max) { return max; }
+	//if (x < min) { return min; }
+	//if (x > max) { return max; }
+	x = ofClamp(x, min, max);
 	return x;
 }
 

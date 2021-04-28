@@ -2,23 +2,6 @@
 #include "GLFW/glfw3.h"
 #include <chrono>
 using namespace std::chrono;
-/*
-float hit_sphere(const point3& center, float radius, const ray& r) {
-	vec3T oc = r.origin() - center;
-	auto a = r.direction().length_squared();
-	auto half_b = dot(oc, r.direction());
-	auto c = oc.length_squared() - radius * radius;
-	auto discriminant = half_b * half_b - a * c;
-	if (discriminant < 0)
-	{
-		return -1.0f;
-	}
-	else
-	{
-		return (-half_b - sqrt(discriminant)) / (a);
-	}
-}
-*/
 
 color ray_color(const ray& r, const hittable& world, int depth) {
 	if (depth <= 0) {
@@ -91,9 +74,7 @@ void ofApp::setup() {
 	using namespace glm;
 
 	ofDisableArbTex();
-
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
 	ofEnableDepthTest();
 
 	// RAYTRACING STUFF BEGINS
@@ -152,17 +133,9 @@ void ofApp::setup() {
 			gColor = 256 * clamp(gColor, 0.0f, 0.999f);
 			bColor = 256 * clamp(bColor, 0.0f, 0.999f);
 			ofColor color(rColor, gColor, bColor);
-			//ofColor color(255, 0, 0);
 			img.setColor(i % imgWidth, ((imgHeight - 1) - j) % imgHeight, color);
 		}
 	}
-
-	//for (int i = 0; i < imgWidth; i++) {
-	//	for (int j = 0; j < imgHeight; j++) {
-	//		ofColor color = ofColor(255 - i % imgWidth, j % imgHeight, 255);
-	//		img.setColor(i % imgWidth, j % imgHeight, color);
-	//	}
-	//}
 
 	img.update();
 	img.save("Pixels.jpg", OF_IMAGE_QUALITY_BEST);

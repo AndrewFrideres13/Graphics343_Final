@@ -33,16 +33,15 @@ bool dielectric::scatter(
 
 	vec3T unit_direction = unit_vector(r_in.direction());
 	float cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0f);
-	float sin_theta = sqrt(1.0f - cos_theta * cos_theta);
+	//Calculate based off above cos, slightly cheaper
+	float sin_theta = 90 - cos_theta;//sqrt(1.0f - cos_theta * cos_theta);
 
 	bool cannot_refract = refraction_ratio * sin_theta > 1.0f;
 	vec3T direction;
 
 	if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_float()) {
 		direction = reflect(unit_direction, rec.normal);
-	}
-	else 
-	{
+	} else {
 		direction = refract(unit_direction, rec.normal, refraction_ratio);
 	}
 
