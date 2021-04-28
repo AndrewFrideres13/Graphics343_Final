@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <random>
+#include "ofMain.h"
 
 using std::sqrt;
 using std::fabs;
