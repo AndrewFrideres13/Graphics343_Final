@@ -30,7 +30,7 @@ public:
 private:
 
 	ofImage img; // Image object to be saved
-	int imgWidth = 600; // Width of image (height is calculated in setup)
+	int imgWidth = 1920; // Width of image (height is calculated in setup)
 	float aspectRatio = 3.0f / 2.0f; // Aspect ratio of image
 
 	vec3T firstV;

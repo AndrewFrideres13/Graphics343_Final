@@ -10,6 +10,7 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 
 	hit_record rec;
 	if (world.hit(r, 0.001f, infinity, rec)) {
+		//Replaced by the scatter in functions
 		//point3 target = rec.p + rec.normal + random_unit_vector();
 		//point3 target = rec.p + random_in_hemisphere(rec.normal);
 		//return 0.5f * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
@@ -79,13 +80,14 @@ void ofApp::setup() {
 
 	// RAYTRACING STUFF BEGINS
 	const int imgHeight = (int)(imgWidth / aspectRatio); // Setting height based on aspect ratio
-	const int samples_per_pixel = 10;
+	const int samples_per_pixel = 20;
 	const int max_depth = 5;
 
 	// World setup
 	auto R = cos(piT / 4);
 	auto world = random_scene(); // Creating all the objects in the scene
 
+	//Alt setup for randomized scene
 	//auto material_ground = make_shared<lambertian>(color(0.8f, 0.8f, 0.0f));
 	//auto material_center = make_shared<lambertian>(color(0.1f, 0.2f, 0.5f));
 	//auto material_left = make_shared<dielectric>(1.5f);
@@ -122,10 +124,6 @@ void ofApp::setup() {
 				pixel_color += ray_color(r, world, max_depth);
 			}
 
-			//auto u = float(i) / (imgWidth - 1);
-			//auto v = float(j) / (imgHeight - 1);
-			//ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			//color pixel_color = ray_color(r, world);
 			auto rColor = sqrt(pixel_color.x() / samples_per_pixel);
 			auto gColor = sqrt(pixel_color.y() / samples_per_pixel);
 			auto bColor = sqrt(pixel_color.z() / samples_per_pixel);
@@ -154,7 +152,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-
+	img.draw(0, 0);
 }
 
 //--------------------------------------------------------------
