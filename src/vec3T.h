@@ -126,6 +126,16 @@ inline vec3T random_in_unit_sphere() {
 	}
 }
 
+inline vec3T random_in_unit_disk() {
+	while (true) {
+		float minT = -1 + (1 - -1) * rand() / (RAND_MAX + 1.0f);
+		float maxT = -1 + (1 - -1) * rand() / (RAND_MAX + 1.0f);
+		auto p = vec3T(minT, maxT, 0);
+		if (p.length_squared() >= 1) continue;
+		return p;
+	}
+}
+
 inline vec3T random_in_hemisphere(const vec3T& normal) {
 	vec3T in_unit_sphere = random_in_unit_sphere();
 	if (dot(in_unit_sphere, normal) > 0.0f) {
@@ -143,4 +153,11 @@ inline vec3T random_unit_vector() {
 
 inline vec3T reflect(const vec3T& v, const vec3T& n) {
 	return v - 2 * dot(v, n) * n;
+}
+
+inline vec3T refract(const vec3T& uv, const vec3T& n, float etai_over_etat) {
+	auto cos_theta = fmin(dot(-uv, n), 1.0f);
+	vec3T r_out_perp = etai_over_etat * (uv + cos_theta * n);
+	vec3T r_out_parallel = -sqrt(fabs(1.0f - r_out_perp.length_squared())) * n;
+	return r_out_perp + r_out_parallel;
 }

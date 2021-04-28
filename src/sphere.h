@@ -6,8 +6,9 @@
 class sphere : public hittable {
 public:
 	sphere() {}
-	sphere(point3 cen, float r, shared_ptr<material> m) 
-		: center(cen), radius(r), mat_ptr(m) {};
+	sphere(point3 cen, float r, shared_ptr<material> m)
+		: center(cen), radius(r), mat_ptr(m) {
+	};
 
 	virtual bool hit(
 		const ray& r, float t_min, float t_max, hit_record& rec) const override;
@@ -22,9 +23,9 @@ inline bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec)
 	vec3T oc = r.origin() - center;
 	auto a = r.direction().length_squared();
 	auto half_b = dot(oc, r.direction());
-	auto c = oc.length_squared() - radius * radius;
+	auto c = oc.length_squared() - pow(radius, 2);
 
-	auto discriminant = half_b * half_b - a * c;
+	auto discriminant = pow(half_b, 2) - a * c;
 	if (discriminant < 0) { return false; }
 	auto sqrtd = sqrt(discriminant);
 

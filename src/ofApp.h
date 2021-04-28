@@ -28,11 +28,10 @@ public:
 	void gotMessage(ofMessage msg);
 
 private:
-	ofMesh cubeMesh;
 
 	ofImage img; // Image object to be saved
-	int imgWidth = 400; // Width of image (height is calculated in setup)
-	float aspectRatio = 16.0f / 9.0f; // Aspect ratio of image
+	int imgWidth = 600; // Width of image (height is calculated in setup)
+	float aspectRatio = 3.0f / 2.0f; // Aspect ratio of image
 
 	vec3T firstV;
 	vec3T secondV;

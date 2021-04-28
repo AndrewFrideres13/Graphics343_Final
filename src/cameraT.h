@@ -4,20 +4,44 @@
 
 class cameraT {
 public:
-	cameraT() {
-		auto aspect_ratio = 16.0f / 9.0f;
-		auto viewport_height = 2.0f;
+	cameraT(
+		point3 lookfrom,
+		point3 lookat,
+		vec3T vup,
+		float vfov,
+		float aspect_ratio,
+		float aperture,
+		float focus_dist
+	) {
+		auto theta = degrees_to_radians(vfov);
+		//Digging into small angle aprox. tan can be aproxx. to theta (theta/2 in our case) thus...
+		//auto h = tan(theta / 2);
+		auto h = theta / 2;
+		auto viewport_height = 2.0f * h;
 		auto viewport_width = aspect_ratio * viewport_height;
+
+		w = unit_vector(lookfrom - lookat);
+		u = unit_vector(cross(vup, w));
+		v = cross(w, u);
+
 		auto focal_length = 1.0f;
 
-		origin = point3(0, 0, 0);
-		horizontal = vec3T(viewport_width, 0.0f, 0.0f);
-		vertical = vec3T(0.0f, viewport_height, 0.0f);
-		lower_left_corner = origin - horizontal / 2 - vertical / 2 - vec3T(0, 0, focal_length);
+		origin = lookfrom;
+		horizontal = focus_dist * viewport_width * u;
+		vertical = focus_dist * viewport_height * v;
+		lower_left_corner = origin - horizontal / 2 - vertical / 2 - focus_dist * w;
+
+		lens_radius = aperture / 2;
 	}
 
-	ray get_ray(float u, float v) const {
-		return ray(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+	ray get_ray(float s, float t) const {
+		vec3T rd = lens_radius * random_in_unit_disk();
+		vec3T offset = u * rd.x() + v * rd.y();
+
+		return ray(
+			origin + offset,
+			lower_left_corner + s * horizontal + t * vertical - origin - offset
+		);
 	}
 
 private:
@@ -25,4 +49,6 @@ private:
 	point3 lower_left_corner;
 	vec3T horizontal;
 	vec3T vertical;
+	vec3T u, v, w;
+	float lens_radius;
 };

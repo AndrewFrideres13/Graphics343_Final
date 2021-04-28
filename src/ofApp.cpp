@@ -43,6 +43,49 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 	return (1.0f - t) * color(1.0f, 1.0f, 1.0f) + t * color(0.5f, 0.7f, 1.0f);
 }
 
+hittable_list random_scene() {
+	hittable_list world;
+
+	auto ground_material = make_shared<lambertian>(color(0.5f, 0.5f, 0.5f));
+	world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material));
+
+	for (int a = -11; a < 11; a++) {
+		for (int b = -11; b < 11; b++) {
+			auto choose_mat = random_float();
+			point3 center(a + 0.9f * random_float(), 0.2f, b + 0.9f * random_float());
+
+			if ((center - point3(4, 0.2f, 0)).length() > 0.9f) {
+				shared_ptr<material> sphere_material;
+
+				if (choose_mat < 0.8f) {
+					auto albedo = color::random() * color::random();
+					sphere_material = make_shared<lambertian>(albedo);
+					world.add(make_shared<sphere>(center, 0.2f, sphere_material));
+				} else if (choose_mat < 0.95f) {
+					auto albedo = color::random(0.5f, 1);
+					auto fuzz = random_float(0, 0.5f);
+					sphere_material = make_shared<metal>(albedo, fuzz);
+					world.add(make_shared<sphere>(center, 0.2f, sphere_material));
+				} else {
+					sphere_material = make_shared<dielectric>(1.5f);
+					world.add(make_shared<sphere>(center, 0.2f, sphere_material));
+				}
+			}
+		}
+	}
+
+	auto material1 = make_shared<dielectric>(1.5f);
+	world.add(make_shared<sphere>(point3(0, 1, 0), 1.0f, material1));
+
+	auto material2 = make_shared<lambertian>(color(0.4f, 0.2f, 0.1f));
+	world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0f, material2));
+
+	auto material3 = make_shared<metal>(color(0.7f, 0.6f, 0.5f), 0.0f);
+	world.add(make_shared<sphere>(point3(4, 1, 0), 1.0f, material3));
+
+	return world;
+}
+
 //--------------------------------------------------------------
 void ofApp::setup() {
 	using namespace glm;
@@ -53,34 +96,40 @@ void ofApp::setup() {
 
 	ofEnableDepthTest();
 
-	cubeMesh.load("models/cube.ply");
-
 	// RAYTRACING STUFF BEGINS
 	const int imgHeight = (int)(imgWidth / aspectRatio); // Setting height based on aspect ratio
 	const int samples_per_pixel = 10;
-	const int max_depth = 10;
+	const int max_depth = 5;
 
-	hittable_list world; // Creating all the objects in the scene
-	//world.add(make_shared<sphere>(point3(0, 0, -1), 0.5f));
-	//world.add(make_shared<sphere>(point3(0, -100.5f, -1), 100));
+	// World setup
+	auto R = cos(piT / 4);
+	auto world = random_scene(); // Creating all the objects in the scene
 
-	auto material_ground = make_shared<lambertian>(color(0.8f, 0.8f, 0.0f));
-	auto material_center = make_shared<lambertian>(color(0.7f, 0.3f, 0.3f));
-	auto material_left = make_shared<metal>(color(0.8f, 0.8f, 0.8f), 0.3f);
-	auto material_right = make_shared<metal>(color(0.8f, 0.6f, 0.2f), 1.0f);
+	//auto material_ground = make_shared<lambertian>(color(0.8f, 0.8f, 0.0f));
+	//auto material_center = make_shared<lambertian>(color(0.1f, 0.2f, 0.5f));
+	//auto material_left = make_shared<dielectric>(1.5f);
+	//auto material_right = make_shared<metal>(color(0.8f, 0.6f, 0.2f), 0.0f);
 
-	world.add(make_shared<sphere>(point3(0.0f, -100.5f, -1.0f), 100.0f, material_ground));
-	world.add(make_shared<sphere>(point3(0.0f, 0.0f, -1.0f), 0.5f, material_center));
-	world.add(make_shared<sphere>(point3(-1.0f, 0.0f, -1.0f), 0.5f, material_left));
-	world.add(make_shared<sphere>(point3(1.0f, 0.0f, -1.0f), 0.5f, material_right));
+	//world.add(make_shared<sphere>(point3(0.0f, -100.5f, -1.0f), 100.0f, material_ground));
+	//world.add(make_shared<sphere>(point3(0.0f, 0.0f, -1.0f), 0.5f, material_center));
+	//world.add(make_shared<sphere>(point3(-1.0f, 0.0f, -1.0f), 0.5f, material_left));
+	//world.add(make_shared<sphere>(point3(-1.0f, 0.0f, -1.0f), -0.45f, material_left));
+	//world.add(make_shared<sphere>(point3(1.0f, 0.0f, -1.0f), 0.5f, material_right));
 
-	cameraT cam;
+	// Camera setup
+	point3 lookfrom(13, 2, 3);
+	point3 lookat(0, 0, 0);
+	vec3T vup(0, 1, 0);
+	auto dist_to_focus = 10.0f;
+	auto aperture = 0.1f;
+	cameraT cam(lookfrom, lookat, vup, 20, aspectRatio, aperture, dist_to_focus);
+
+	// Image setup
+	img.allocate(imgWidth, imgHeight, OF_IMAGE_COLOR);
+	img.setColor(ofColor::white);
 
 	//Start our high precision timer before we begin the raytracing work
 	auto start = high_resolution_clock::now();
-
-	img.allocate(imgWidth, imgHeight, OF_IMAGE_COLOR);
-	img.setColor(ofColor::white);
 
 	for (int j = imgHeight - 1; j >= 0; j--) {
 		for (int i = 0; i < imgWidth; i++) {
@@ -137,11 +186,7 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-	if (key == 's') {
-		img.grabScreen(0, 0, 1000, 1000);
 
-		img.save("Raycast.jpg");
-	}
 }
 
 //--------------------------------------------------------------
