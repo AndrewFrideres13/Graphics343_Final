@@ -143,8 +143,8 @@ void ofApp::setup() {
 	//Stop our timer, and calculate the elapsed time
 	//This may need to move before we save the img...not 100% sure yet.
 	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<milliseconds>(stop - start);
-	std::cout << "\nElapsed Time: " << duration.count() << "ms" << std::endl;
+	auto duration = duration_cast<minutes>(stop - start);
+	std::cout << "\nElapsed Time: " << duration.count() << " minutes" << std::endl;
 }
 
 //--------------------------------------------------------------

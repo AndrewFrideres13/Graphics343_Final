@@ -7,8 +7,7 @@
 using std::sqrt;
 using std::fabs;
 
-class vec3T
-{
+class vec3T {
 public:
 	vec3T() : e() {}
 	vec3T(float e0, float e1, float e2) : e{ e0, e1, e2 } {}
@@ -138,13 +137,15 @@ inline vec3T random_in_unit_disk() {
 
 inline vec3T random_in_hemisphere(const vec3T& normal) {
 	vec3T in_unit_sphere = random_in_unit_sphere();
-	if (dot(in_unit_sphere, normal) > 0.0f) {
+
+	//Attempting to be loose here, as trhis *should* never return 0
+	in_unit_sphere *= ofSign(dot(in_unit_sphere, normal));
+	/*if (dot(in_unit_sphere, normal) > 0.0f) {
 		return in_unit_sphere;
-	}
-	else
-	{
+	} else {
 		return -in_unit_sphere;
-	}
+	}*/
+	return in_unit_sphere;
 }
 
 inline vec3T random_unit_vector() {
