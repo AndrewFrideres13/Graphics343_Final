@@ -11,10 +11,10 @@ using std::make_shared;
 using std::sqrt;
 
 const float infinity = std::numeric_limits<float>::infinity();
-const float pi = 3.1415926535897932385f;
+const float piT = 3.1415926535897932385f;
 
 inline float degrees_to_radians(float degrees) {
-	return degrees * pi / 180.0f;
+	return degrees * piT / 180.0f;
 }
 
 inline float random_float() {

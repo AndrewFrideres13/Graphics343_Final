@@ -39,8 +39,8 @@ class ofApp : public ofBaseApp{
 		ofxCubemap cubemap;
 
 		ofImage img; // Image object to be saved
-		int imgWidth = 350; // Width of image (height is calculated in setup)
-		float aspectRatio = 16.0f / 9.0f; // Aspect ratio of image
+		int imgWidth = 600; // Width of image (height is calculated in setup)
+		float aspectRatio = 3.0f / 2.0f; // Aspect ratio of image
 
 		SceneGraphNode sceneGraphRoot;
 		std::shared_ptr<SceneGraphNode> sphereNode;
