@@ -94,6 +94,34 @@ hittable_list random_scene() {
 	return world;
 }
 
+hittable_list rainbow() 
+{
+	hittable_list world;
+
+	auto ground_material = make_shared<lambertian>(color(0.5f, 0.5f, 0.5f));
+	world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material));
+
+	auto redMetal = make_shared<metal>(color(1.0f, 0.0f, 0.0f), 0.0f);
+	auto orangeMetal = make_shared<metal>(color(1.0f, 0.65f, 0.0f), 0.1f);
+	auto yellowMetal = make_shared<metal>(color(1.0f, 1.0f, 0.0f), 0.2f);
+	auto greenMetal = make_shared<metal>(color(0.0f, 0.5f, 0.0f), 0.3f);
+	auto blueMetal = make_shared<metal>(color(0.0f, 0.0f, 1.0f), 0.4f);
+	auto purpleMetal = make_shared<metal>(color(0.29f, 0.0f, 0.51f), 0.5f);
+	auto violetMetal = make_shared<metal>(color(0.93f, 0.51f, 0.93f), 0.6f);
+	auto pureMetal = make_shared<metal>(color(0.7f, 0.6f, 0.5f), 0.0f);
+
+	world.add(make_shared<sphere>(point3(-4.5f, 0.5f, -1.0f), 0.5f, redMetal));
+	world.add(make_shared<sphere>(point3(-3.0f, 1.5f, -1.0f), 0.5f, orangeMetal));
+	world.add(make_shared<sphere>(point3(-1.5f, 2.25f, -1.0f), 0.5f, yellowMetal));
+	world.add(make_shared<sphere>(point3(0.0f, 2.75f, -1.0f), 0.5f, greenMetal));
+	world.add(make_shared<sphere>(point3(1.5f, 2.25f, -1.0f), 0.5f, blueMetal));
+	world.add(make_shared<sphere>(point3(3.0f, 1.5f, -1.0f), 0.5f, purpleMetal));
+	world.add(make_shared<sphere>(point3(4.5f, 0.5f, -1.0f), 0.5f, violetMetal));
+	world.add(make_shared<sphere>(point3(0.0f, 1.0f, -1.0f), 1.0f, pureMetal));
+
+	return world;
+}
+
 //--------------------------------------------------------------
 void ofApp::setup()
 {
@@ -123,12 +151,12 @@ void ofApp::setup()
 
 	// RAYTRACING STUFF BEGINS
 	const int imgHeight = (int)(imgWidth / aspectRatio); // Setting height based on aspect ratio
-	const int samples_per_pixel = 10;
-	const int max_depth = 5;
+	const int samples_per_pixel = 2;
+	const int max_depth = 10;
 
 	// World setup
 	auto R = cos(piT / 4);
-	auto world = random_scene(); // Creating all the objects in the scene
+	auto world = rainbow(); // Creating all the objects in the scene
 
 	//auto material_ground = make_shared<lambertian>(color(0.8f, 0.8f, 0.0f));
 	//auto material_center = make_shared<lambertian>(color(0.1f, 0.2f, 0.5f));
@@ -142,12 +170,12 @@ void ofApp::setup()
 	//world.add(make_shared<sphere>(point3(1.0f, 0.0f, -1.0f), 0.5f, material_right));
 
 	// Camera setup
-	point3 lookfrom(13, 2, 3);
-	point3 lookat(0, 0, 0);
+	point3 lookfrom(4, 2, 8);
+	point3 lookat(1, 2, 0);
 	vec3T vup(0, 1, 0);
 	auto dist_to_focus = 10.0f;
 	auto aperture = 0.1f;
-	cameraT cam(lookfrom, lookat, vup, 20, aspectRatio, aperture, dist_to_focus);
+	cameraT cam(lookfrom, lookat, vup, 40, aspectRatio, aperture, dist_to_focus);
 
 	// Image setup
 	img.allocate(imgWidth, imgHeight, OF_IMAGE_COLOR);
